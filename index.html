@@ -5,6 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>THREADLAB — Multithreading &amp; Concurrency Learning Hub</title>
 <meta name="description" content="A student-friendly guide to threads, processes, synchronization, race conditions, deadlocks and Python threading.">
+<script>
+/* Apply the saved ThreadLab theme before first paint so dark mode never flashes white. */
+(function () {
+  try {
+    var saved = localStorage.getItem("threadlab-theme");
+    if (saved === "dark" || saved === "light") {
+      document.documentElement.setAttribute("data-theme", saved);
+      return;
+    }
+  } catch (error) {
+    /* storage unavailable — fall through to the system preference */
+  }
+  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,12 +40,6 @@
       <span class="logo-sub">Multithreading Learning Hub</span>
     </a>
 
-    <button class="nav-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-nav">
-      <span class="nav-toggle-bar"></span>
-      <span class="nav-toggle-bar"></span>
-      <span class="nav-toggle-bar"></span>
-    </button>
-
     <nav class="primary-nav" id="primary-nav" aria-label="Primary navigation">
       <ul class="nav-links">
         <li><a class="nav-link is-active" href="#home">Home</a></li>
@@ -40,11 +51,34 @@
       <a class="btn btn-outline btn-sm nav-cta" href="#quiz">Quick Quiz</a>
     </nav>
 
-    <button class="tools-toggle" type="button" aria-label="Open tools menu"
+    <button class="theme-toggle" type="button" id="themeToggle"
+            aria-label="Switch to dark mode" title="Switch to dark mode">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+      </svg>
+    </button>
+
+    <button class="tools-toggle" type="button" aria-label="Open navigation sidebar"
+            title="Open navigation sidebar"
             aria-expanded="false" aria-controls="tools-drawer">
-      <span class="tools-toggle-bar"></span>
-      <span class="tools-toggle-bar"></span>
-      <span class="tools-toggle-bar"></span>
+      <svg class="icon-panel-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+        <path d="M9 3v18"></path>
+        <path d="m14 9 3 3-3 3"></path>
+      </svg>
+      <svg class="icon-panel-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+        <path d="M9 3v18"></path>
+        <path d="m16 15-3-3 3-3"></path>
+      </svg>
     </button>
 
   </div>
@@ -61,8 +95,32 @@
       <p class="drawer-title" id="tools-drawer-title">THREADLAB TOOLS</p>
       <p class="drawer-sub">Explore interactive multithreading tools.</p>
     </div>
-    <button class="drawer-close" type="button" aria-label="Close tools menu">&times;</button>
+    <button class="drawer-close" type="button" aria-label="Close navigation sidebar">&times;</button>
   </div>
+
+  <nav class="drawer-nav drawer-nav--primary" aria-label="Primary">
+    <p class="drawer-group">Learn</p>
+    <a class="drawer-item drawer-item--nav is-active" href="#home" aria-current="true">
+      <span class="drawer-item-title">Home</span>
+    </a>
+    <a class="drawer-item drawer-item--nav" href="#concepts">
+      <span class="drawer-item-title">Concepts</span>
+    </a>
+    <a class="drawer-item drawer-item--nav" href="#threads-vs-processes">
+      <span class="drawer-item-title">Threads vs Processes</span>
+    </a>
+    <a class="drawer-item drawer-item--nav" href="#synchronization">
+      <span class="drawer-item-title">Synchronization</span>
+    </a>
+    <a class="drawer-item drawer-item--nav" href="#python">
+      <span class="drawer-item-title">Python Example</span>
+    </a>
+    <a class="drawer-item drawer-item--nav" href="#quiz">
+      <span class="drawer-item-title">Quick Quiz</span>
+    </a>
+  </nav>
+
+  <div class="drawer-divider" aria-hidden="true"></div>
 
   <nav class="drawer-nav" aria-label="Advanced tools">
     <a class="drawer-item" href="#dashboard">
@@ -1884,8 +1942,8 @@ threads = []
 
       <p class="body-text">
         The top navigation follows the theory: concepts, threads versus processes,
-        synchronization, race conditions, deadlocks and Python threading. The tools menu
-        (&#9776;) opens the interactive side of the site: a learning dashboard, a thread
+        synchronization, race conditions, deadlocks and Python threading. The sidebar menu
+        (panel icon) opens the interactive side of the site: a learning dashboard, a thread
         simulator, a race condition lab, a deadlock visualizer, a lifecycle walkthrough,
         a context switch visualizer and a small scheduling playground.
       </p>

@@ -157,57 +157,93 @@
   }
 
   /* =========================================================
-     Existing behaviour: mobile navigation
+     Theme toggle — light / dark, persisted in localStorage
      ========================================================= */
-  var toggle = $(".nav-toggle");
-  var nav = $(".primary-nav");
+  var THEME_KEY = "threadlab-theme";
+  var themeToggle = $("#themeToggle");
+  var systemTheme = window.matchMedia
+    ? window.matchMedia("(prefers-color-scheme: dark)")
+    : null;
 
-  if (toggle && nav) {
-    toggle.addEventListener("click", function () {
-      var open = nav.classList.toggle("is-open");
-      toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      toggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
-    });
+  function getStoredTheme() {
+    try {
+      return window.localStorage.getItem(THEME_KEY);
+    } catch (error) {
+      return null;
+    }
+  }
 
-    nav.querySelectorAll("a").forEach(function (link) {
-      link.addEventListener("click", function () {
-        nav.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.setAttribute("aria-label", "Open navigation menu");
-      });
-    });
+  function storeTheme(theme) {
+    try {
+      window.localStorage.setItem(THEME_KEY, theme);
+    } catch (error) {
+      /* storage unavailable — theme still applies for this session */
+    }
+  }
 
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && nav.classList.contains("is-open")) {
-        nav.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.focus();
-      }
+  function resolveTheme() {
+    var stored = getStoredTheme();
+    if (stored === "light" || stored === "dark") return stored;
+    return systemTheme && systemTheme.matches ? "dark" : "light";
+  }
+
+  function updateThemeIcon(theme) {
+    if (!themeToggle) return;
+    var label = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+    themeToggle.setAttribute("aria-label", label);
+    themeToggle.setAttribute("title", label);
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    updateThemeIcon(theme);
+  }
+
+  applyTheme(resolveTheme());
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function () {
+      var isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      var next = isDark ? "light" : "dark";
+      storeTheme(next);
+      applyTheme(next);
     });
   }
 
+  if (systemTheme) {
+    var handleSystemTheme = function (event) {
+      if (!getStoredTheme()) {
+        applyTheme(event.matches ? "dark" : "light");
+      }
+    };
+
+    if (typeof systemTheme.addEventListener === "function") {
+      systemTheme.addEventListener("change", handleSystemTheme);
+    } else if (typeof systemTheme.addListener === "function") {
+      systemTheme.addListener(handleSystemTheme);
+    }
+  }
+
   /* =========================================================
-     Existing behaviour: active section highlight
+     Active section highlight
      ========================================================= */
   var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav-link"));
+  var drawerNavLinks = Array.prototype.slice.call(
+    document.querySelectorAll(".drawer-item--nav")
+  );
+  var activeNavLinks = navLinks.concat(drawerNavLinks);
   var sections = navLinks
     .map(function (link) {
       return document.querySelector(link.getAttribute("href"));
     })
     .filter(Boolean);
 
-  function highlight() {
-    var position = window.scrollY + 140;
-    var currentId = sections.length ? sections[0].id : "";
+  /* A section becomes "active" once its top edge passes this line. */
+  var ACTIVE_LINE = 140;
 
-    sections.forEach(function (section) {
-      if (section.offsetTop <= position) {
-        currentId = section.id;
-      }
-    });
-
-    navLinks.forEach(function (link) {
-      var active = link.getAttribute("href") === "#" + currentId;
+  function setActiveLink(id) {
+    activeNavLinks.forEach(function (link) {
+      var active = link.getAttribute("href") === "#" + id;
       link.classList.toggle("is-active", active);
       if (active) {
         link.setAttribute("aria-current", "true");
@@ -217,6 +253,44 @@
     });
   }
 
+  function currentSectionId() {
+    var currentId = sections.length ? sections[0].id : "";
+    sections.forEach(function (section) {
+      if (section.getBoundingClientRect().top <= ACTIVE_LINE) {
+        currentId = section.id;
+      }
+    });
+    return currentId;
+  }
+
+  function highlight() {
+    setActiveLink(currentSectionId());
+  }
+
+  if (sections.length) {
+    if ("IntersectionObserver" in window) {
+      /* The observer only wakes us up when a section crosses the active line,
+         so highlighting costs nothing while the reader is simply scrolling. */
+      var activeObserver = new IntersectionObserver(
+        function () {
+          setActiveLink(currentSectionId());
+        },
+        { rootMargin: "-" + ACTIVE_LINE + "px 0px 0px 0px", threshold: 0 }
+      );
+
+      sections.forEach(function (section) {
+        activeObserver.observe(section);
+      });
+
+      setActiveLink(currentSectionId());
+      window.addEventListener("resize", highlight);
+    } else {
+      highlight();
+      window.addEventListener("scroll", highlight, { passive: true });
+      window.addEventListener("resize", highlight);
+    }
+  }
+
   /* Marks every learning section the reader has scrolled past. */
   function markScrolledSections() {
     var position = window.scrollY + 240;
@@ -224,12 +298,6 @@
       var el = document.getElementById(id);
       if (el && el.offsetTop <= position) rememberSection(id);
     });
-  }
-
-  if (sections.length) {
-    highlight();
-    window.addEventListener("scroll", highlight, { passive: true });
-    window.addEventListener("resize", highlight);
   }
 
   /* =========================================================
@@ -315,53 +383,65 @@
   }
 
   /* =========================================================
-     Tools drawer — openToolsMenu() / closeToolsMenu()
+     Sidebar drawer — openSidebar() / closeSidebar()
      ========================================================= */
-  var toolsToggle = $(".tools-toggle");
+  var sidebarToggle = $(".tools-toggle");
   var drawer = $("#tools-drawer");
   var drawerOverlay = $("[data-drawer-overlay]");
   var drawerClose = $(".drawer-close");
   var drawerReturnFocus = null;
 
-  function openToolsMenu() {
+  function updateSidebarIcon() {
+    if (!sidebarToggle) return;
+    var open = sidebarToggle.getAttribute("aria-expanded") === "true";
+    var label = open ? "Close navigation sidebar" : "Open navigation sidebar";
+    sidebarToggle.setAttribute("aria-label", label);
+    sidebarToggle.setAttribute("title", label);
+  }
+
+  function openSidebar() {
     if (!drawer) return;
     drawerReturnFocus = document.activeElement;
     drawer.classList.add("is-open");
     drawer.setAttribute("aria-hidden", "false");
     if (drawerOverlay) drawerOverlay.classList.add("is-open");
-    if (toolsToggle) toolsToggle.setAttribute("aria-expanded", "true");
+    if (sidebarToggle) sidebarToggle.setAttribute("aria-expanded", "true");
+    updateSidebarIcon();
     document.body.classList.add("drawer-open");
     if (drawerClose) drawerClose.focus();
   }
 
-  function closeToolsMenu() {
+  function closeSidebar() {
     if (!drawer) return;
     drawer.classList.remove("is-open");
     drawer.setAttribute("aria-hidden", "true");
     if (drawerOverlay) drawerOverlay.classList.remove("is-open");
-    if (toolsToggle) toolsToggle.setAttribute("aria-expanded", "false");
+    if (sidebarToggle) sidebarToggle.setAttribute("aria-expanded", "false");
+    updateSidebarIcon();
     document.body.classList.remove("drawer-open");
     if (drawerReturnFocus && drawerReturnFocus.focus) {
       drawerReturnFocus.focus();
     }
   }
 
-  if (toolsToggle) {
-    toolsToggle.addEventListener("click", function () {
+  updateSidebarIcon();
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener("click", function () {
       if (drawer && drawer.classList.contains("is-open")) {
-        closeToolsMenu();
+        closeSidebar();
       } else {
-        openToolsMenu();
+        openSidebar();
       }
     });
   }
 
-  if (drawerClose) drawerClose.addEventListener("click", closeToolsMenu);
-  if (drawerOverlay) drawerOverlay.addEventListener("click", closeToolsMenu);
+  if (drawerClose) drawerClose.addEventListener("click", closeSidebar);
+  if (drawerOverlay) drawerOverlay.addEventListener("click", closeSidebar);
 
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape" && drawer && drawer.classList.contains("is-open")) {
-      closeToolsMenu();
+      closeSidebar();
     }
   });
 
@@ -372,10 +452,166 @@
         if (target && target.charAt(0) === "#") {
           rememberSection(target.slice(1));
         }
-        closeToolsMenu();
+        closeSidebar();
       });
     });
   }
+
+  /* =========================================================
+     Smart sticky navbar — hide on scroll down, show on scroll up
+     ========================================================= */
+  var siteHeader = $(".site-header");
+  var SCROLL_THRESHOLD = 6; /* px of travel before we react */
+  var NEAR_TOP = 80; /* never hide the navbar within this distance of the top */
+  var NAVBAR_FORCE_MS = 2000;
+  var lastScrollY = window.scrollY;
+  var navbarTicking = false;
+  var forceNavbarVisible = false;
+  var forceNavbarTimer = null;
+
+  /* The navbar must never disappear while it is being used. */
+  function navbarIsGuarded() {
+    return (
+      forceNavbarVisible ||
+      Boolean(drawer && drawer.classList.contains("is-open")) ||
+      Boolean(siteHeader && siteHeader.contains(document.activeElement))
+    );
+  }
+
+  function showNavbar() {
+    if (siteHeader) siteHeader.classList.remove("navbar-hidden");
+  }
+
+  function hideNavbar() {
+    if (siteHeader && !navbarIsGuarded()) siteHeader.classList.add("navbar-hidden");
+  }
+
+  function syncScrolledState() {
+    if (siteHeader) siteHeader.classList.toggle("is-scrolled", window.scrollY > 8);
+  }
+
+  function releaseNavbarForce() {
+    if (forceNavbarTimer) {
+      window.clearTimeout(forceNavbarTimer);
+      forceNavbarTimer = null;
+    }
+    forceNavbarVisible = false;
+  }
+
+  function keepNavbarVisible() {
+    forceNavbarVisible = true;
+    if (forceNavbarTimer) window.clearTimeout(forceNavbarTimer);
+    forceNavbarTimer = window.setTimeout(function () {
+      releaseNavbarForce();
+      handleNavbarScroll();
+    }, NAVBAR_FORCE_MS);
+    showNavbar();
+  }
+
+  function handleNavbarScroll() {
+    if (navbarTicking) return;
+    navbarTicking = true;
+
+    window.requestAnimationFrame(function () {
+      var currentScrollY = window.scrollY;
+      var delta = currentScrollY - lastScrollY;
+
+      if (navbarIsGuarded() || currentScrollY < NEAR_TOP) {
+        showNavbar();
+      } else if (delta > SCROLL_THRESHOLD) {
+        hideNavbar();
+      } else if (delta < -SCROLL_THRESHOLD) {
+        showNavbar();
+      }
+
+      /* Only re-anchor once the threshold is passed, so tiny scroll jitter
+         never flips the navbar back and forth. */
+      if (Math.abs(delta) > SCROLL_THRESHOLD) lastScrollY = currentScrollY;
+
+      syncScrolledState();
+      markScrolledSections();
+      /* The observer reports crossings asynchronously, so a programmatic
+         smooth scroll can land without it catching the final section.
+         Re-reading the active section here keeps the link truthful. */
+      highlight();
+      navbarTicking = false;
+    });
+  }
+
+  window.addEventListener("scroll", handleNavbarScroll, { passive: true });
+  window.addEventListener("resize", handleNavbarScroll);
+  window.addEventListener("scrollend", function () {
+    if (forceNavbarVisible) releaseNavbarForce();
+    handleNavbarScroll();
+  });
+  /* A wheel gesture means the reader has taken back control. */
+  window.addEventListener("wheel", releaseNavbarForce, { passive: true });
+
+  if (siteHeader) {
+    /* Keyboard users must never lose the navbar they are tabbing through. */
+    siteHeader.addEventListener("focusin", function () {
+      showNavbar();
+    });
+  }
+
+  showNavbar();
+  syncScrolledState();
+
+  /* =========================================================
+     In-page navigation — smooth scroll with the navbar held open
+     ========================================================= */
+  function prefersReducedMotion() {
+    return Boolean(
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    );
+  }
+
+  function scrollPageTo(top) {
+    var root = document.documentElement;
+
+    if (prefersReducedMotion()) {
+      var previous = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      window.scrollTo(0, Math.max(0, top));
+      root.style.scrollBehavior = previous;
+      return;
+    }
+
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+  }
+
+  function scrollToSection(id) {
+    var target = id ? document.getElementById(id) : null;
+    if (!target) return false;
+
+    var headerHeight = siteHeader ? siteHeader.offsetHeight : 73;
+    var top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 16;
+
+    keepNavbarVisible();
+    showNavbar();
+    setActiveLink(id);
+    rememberSection(id);
+
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", "#" + id);
+    }
+
+    scrollPageTo(top);
+
+    if (prefersReducedMotion()) releaseNavbarForce();
+    return true;
+  }
+
+  $$('.primary-nav a[href^="#"], .tools-drawer a[href^="#"]').forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      var href = link.getAttribute("href");
+      if (!href || href.length < 2 || href.charAt(0) !== "#") return;
+      var id = href.slice(1);
+      if (!document.getElementById(id)) return;
+      event.preventDefault();
+      scrollToSection(id);
+    });
+  });
 
   /* =========================================================
      Dashboard — updateDashboard()
@@ -2200,8 +2436,6 @@
   updateDashboard();
   updateCounters();
   markScrolledSections();
-
-  window.addEventListener("scroll", markScrolledSections, { passive: true });
 
   if (location.hash) {
     rememberSection(location.hash.slice(1));
