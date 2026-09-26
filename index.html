@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREADLAB — Multithreading &amp; Concurrency Learning Hub</title>
+<meta name="description" content="A student-friendly guide to threads, processes, synchronization, race conditions, deadlocks and Python threading.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============================ HEADER ============================ -->
+<header class="site-header">
+  <div class="container nav-wrap">
+
+    <a class="logo" href="#home">
+      <span class="logo-mark">THREADLAB</span>
+      <span class="logo-sub">Multithreading Learning Hub</span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-nav">
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+      <span class="nav-toggle-bar"></span>
+    </button>
+
+    <nav class="primary-nav" id="primary-nav" aria-label="Primary navigation">
+      <ul class="nav-links">
+        <li><a class="nav-link is-active" href="#home">Home</a></li>
+        <li><a class="nav-link" href="#concepts">Concepts</a></li>
+        <li><a class="nav-link" href="#threads-vs-processes">Threads vs Processes</a></li>
+        <li><a class="nav-link" href="#synchronization">Synchronization</a></li>
+        <li><a class="nav-link" href="#python">Python Example</a></li>
+      </ul>
+      <a class="btn btn-outline btn-sm nav-cta" href="#quiz">Quick Quiz</a>
+    </nav>
+
+    <button class="tools-toggle" type="button" aria-label="Open tools menu"
+            aria-expanded="false" aria-controls="tools-drawer">
+      <span class="tools-toggle-bar"></span>
+      <span class="tools-toggle-bar"></span>
+      <span class="tools-toggle-bar"></span>
+    </button>
+
+  </div>
+</header>
+
+<!-- ============================ TOOLS DRAWER ============================ -->
+<div class="drawer-overlay" data-drawer-overlay></div>
+
+<aside class="tools-drawer" id="tools-drawer" role="dialog" aria-modal="true"
+       aria-labelledby="tools-drawer-title" aria-hidden="true">
+
+  <div class="drawer-head">
+    <div>
+      <p class="drawer-title" id="tools-drawer-title">THREADLAB TOOLS</p>
+      <p class="drawer-sub">Explore interactive multithreading tools.</p>
+    </div>
+    <button class="drawer-close" type="button" aria-label="Close tools menu">&times;</button>
+  </div>
+
+  <nav class="drawer-nav" aria-label="Advanced tools">
+    <a class="drawer-item" href="#dashboard">
+      <span class="drawer-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2.5" y="2.5" width="5.5" height="5.5" rx="1"></rect>
+          <rect x="10" y="2.5" width="5.5" height="5.5" rx="1"></rect>
+          <rect x="2.5" y="10" width="5.5" height="5.5" rx="1"></rect>
+          <rect x="10" y="10" width="5.5" height="5.5" rx="1"></rect>
+        </svg>
+      </span>
+      <span class="drawer-item-text">
+        <span class="drawer-item-title">Dashboard</span>
+        <span class="drawer-item-desc">Your learning overview and activity.</span>
+      </span>
+    </a>
+
+    <a class="drawer-item" href="#simulator">
+      <span class="drawer-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="9" cy="9" r="6.5"></circle>
+          <path d="M7.4 6.3l4.4 2.7-4.4 2.7z" stroke-linejoin="round"></path>
+        </svg>
+      </span>
+      <span class="drawer-item-text">
+        <span class="drawer-item-title">Thread Simulator</span>
+        <span class="drawer-item-desc">Create and run simulated threads.</span>
+      </span>
+    </a>
+
+    <a class="drawer-item" href="#sim-timeline">
+      <span class="drawer-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M3 15V9.5"></path>
+          <path d="M7 15V4"></path>
+          <path d="M11 15v-4"></path>
+          <path d="M15 15V7"></path>
+        </svg>
+      </span>
+      <span class="drawer-item-text">
+        <span class="drawer-item-title">Thread Visualizer</span>
+        <span class="drawer-item-desc">Watch execution on the live timeline.</span>
+      </span>
+    </a>
+
+    <a class="drawer-item" href="#race-lab">
+      <span class="drawer-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 2.8l6.6 11.7H2.4L9 2.8z"></path>
+          <path d="M9 7.4v3.2"></path>
+          <path d="M9 12.5h.01"></path>
+        </svg>
+      </span>
+      <span class="drawer-item-text">
+        <span class="drawer-item-title">Race Condition Lab</span>
+        <span class="drawer-item-desc">See what happens when shared data is not protected.</span>
+      </span>
+    </a>
+
+    <a class="drawer-item" href="#deadlock-lab">
+      <span class="drawer-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <rect x="3.5" y="7.8" width="11" height="7.4" rx="1.5"></rect>
+          <path d="M6.2 7.8V5.7a2.8 2.8 0 015.6 0v2.1"></path>
+        </svg>
+      </span>
+      <span class="drawer-item-text">
+        <span class="drawer-item-title">Deadlock Demo</span>
+        <span class="drawer-item-desc">Visualize threads waiting for locked resources.</span>
+      </span>
+    </a>
+
+    <a class="drawer-item" href="#progress">
+      <span class="drawer-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2.8 15h12.4"></path>
+          <path d="M4.4 11.6l3.4-3.4 2.6 2.6 4.2-4.6"></path>
+          <path d="M14.6 6.2h-3"></path>
+        </svg>
+      </span>
+      <span class="drawer-item-text">
+        <span class="drawer-item-title">Learning Progress</span>
+        <span class="drawer-item-desc">See which topics you have completed.</span>
+      </span>
+    </a>
+
+    <a class="drawer-item" href="#reference">
+      <span class="drawer-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M4 3.2h10v11.6H4z" stroke-linejoin="round"></path>
+          <path d="M6.6 6.6h4.8"></path>
+          <path d="M6.6 9h4.8"></path>
+          <path d="M6.6 11.4h3"></path>
+        </svg>
+      </span>
+      <span class="drawer-item-text">
+        <span class="drawer-item-title">Quick Reference</span>
+        <span class="drawer-item-desc">Compact definitions of the core terms.</span>
+      </span>
+    </a>
+
+    <a class="drawer-item" href="#about">
+      <span class="drawer-icon" aria-hidden="true">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="9" cy="9" r="6.5"></circle>
+          <path d="M9 8.3v3.8"></path>
+          <path d="M9 5.9h.01"></path>
+        </svg>
+      </span>
+      <span class="drawer-item-text">
+        <span class="drawer-item-title">About ThreadLab</span>
+        <span class="drawer-item-desc">What this site is and how to use it.</span>
+      </span>
+    </a>
+  </nav>
+
+  <p class="drawer-foot">Everything runs locally in your browser. No account, no server.</p>
+</aside>
+
+<main id="main">
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+
+      <div class="hero-copy">
+        <p class="eyebrow">Operating Systems • Concurrency</p>
+        <h1 class="hero-title">Master Multithreading.<br>Understand Concurrency.</h1>
+        <p class="hero-lead">
+          Learn how threads, processes, synchronization, locks, race conditions, deadlocks,
+          and Python threading work together to improve the way modern applications handle
+          multiple tasks.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#why">Start Learning</a>
+          <a class="btn btn-outline" href="#python">View Thread Example</a>
+        </div>
+
+        <p class="hero-note">Designed for Computer Science students • Beginner friendly</p>
+      </div>
+
+      <figure class="hero-diagram" aria-label="Diagram of four threads running inside one process">
+        <figcaption class="diagram-head">
+          <span class="diagram-tag">PROCESS</span>
+          <span class="diagram-meta">PID 4201 · one address space</span>
+        </figcaption>
+
+        <div class="diagram-body">
+          <span class="diagram-stem" aria-hidden="true"></span>
+          <ul class="thread-rows">
+            <li class="thread-row">
+              <span class="thread-id">Thread 01</span>
+              <span class="thread-task">Fetch Data</span>
+              <span class="thread-state">RUN</span>
+            </li>
+            <li class="thread-row">
+              <span class="thread-id">Thread 02</span>
+              <span class="thread-task">Process Request</span>
+              <span class="thread-state">RUN</span>
+            </li>
+            <li class="thread-row">
+              <span class="thread-id">Thread 03</span>
+              <span class="thread-task">Save Result</span>
+              <span class="thread-state thread-state--wait">WAIT</span>
+            </li>
+            <li class="thread-row">
+              <span class="thread-id">Thread 04</span>
+              <span class="thread-task">Update UI</span>
+              <span class="thread-state">RUN</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="diagram-foot">
+          <span>Shared memory</span>
+          <span>Shared file handles</span>
+          <span>Shared resources</span>
+        </div>
+      </figure>
+
+    </div>
+  </section>
+
+  <!-- ============================ WHY ============================ -->
+  <section class="section" id="why">
+    <div class="container">
+      <div class="section-header section-header--narrow">
+        <p class="eyebrow">Foundations</p>
+        <h2 class="section-title">Why Multithreading Matters</h2>
+        <p class="section-lead">
+          Modern applications rarely do only one thing at a time. A browser renders a page while
+          downloading assets, an editor saves a file while you keep typing, and a server answers
+          one request while another is still being processed. Multithreading is the mechanism
+          that makes this overlapping work possible inside a single program.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <article class="info-card">
+          <span class="info-num">01</span>
+          <h3 class="info-title">Responsiveness</h3>
+          <p class="info-text">Background operations can run without freezing the main application.</p>
+        </article>
+
+        <article class="info-card">
+          <span class="info-num">02</span>
+          <h3 class="info-title">Resource Sharing</h3>
+          <p class="info-text">Threads belonging to the same process can efficiently share memory and resources.</p>
+        </article>
+
+        <article class="info-card">
+          <span class="info-num">03</span>
+          <h3 class="info-title">Concurrency</h3>
+          <p class="info-text">Multiple tasks can make progress during overlapping periods of execution.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ CORE CONCEPTS ============================ -->
+  <section class="section section--tint" id="concepts">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Building Blocks</p>
+        <h2 class="section-title">Core Concepts</h2>
+        <p class="section-lead">Understand the building blocks of concurrent programming.</p>
+      </div>
+
+      <div class="grid-3 concepts-grid">
+
+        <article class="concept-card">
+          <p class="concept-label">Thread</p>
+          <p class="concept-text">The smallest sequence of instructions that can be independently scheduled inside a process.</p>
+          <div class="mini-viz mini-viz--threads" aria-hidden="true">
+            <span class="chip chip--on">T1</span>
+            <span class="chip">T2</span>
+            <span class="chip">T3</span>
+            <span class="viz-caption">one process</span>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <p class="concept-label">Process</p>
+          <p class="concept-text">An independent running program with its own memory space and system resources.</p>
+          <div class="mini-viz mini-viz--process" aria-hidden="true">
+            <span class="mem-block">[ PID 4201 ]</span>
+            <span class="viz-caption">private address space</span>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <p class="concept-label">Concurrency</p>
+          <p class="concept-text">Multiple tasks making progress during overlapping periods.</p>
+          <div class="mini-viz" aria-hidden="true">
+            <div class="gantt">
+              <span class="gantt-bar gantt-bar--a"></span>
+              <span class="gantt-bar gantt-bar--b"></span>
+            </div>
+            <span class="viz-caption">tasks interleave in time</span>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <p class="concept-label">Parallelism</p>
+          <p class="concept-text">Multiple operations executing simultaneously, usually across multiple CPU cores.</p>
+          <div class="mini-viz" aria-hidden="true">
+            <div class="gantt gantt--parallel">
+              <span class="gantt-bar gantt-bar--a"></span>
+              <span class="gantt-bar gantt-bar--a"></span>
+            </div>
+            <span class="viz-caption">core 1 and core 2 run together</span>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <p class="concept-label">Context Switch</p>
+          <p class="concept-text">The operating system pauses one execution context and resumes another.</p>
+          <div class="mini-viz" aria-hidden="true">
+            <div class="gantt gantt--switch">
+              <span class="gantt-bar gantt-bar--a"></span>
+              <span class="gantt-bar gantt-bar--b"></span>
+            </div>
+            <span class="viz-caption">CPU moves from A to B</span>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <p class="concept-label">Scheduler</p>
+          <p class="concept-text">The operating system component responsible for deciding which task runs next.</p>
+          <div class="mini-viz" aria-hidden="true">
+            <div class="queue">
+              <span class="queue-item">T1</span>
+              <span class="queue-item">T3</span>
+              <span class="queue-item">T2</span>
+              <span class="queue-arrow">→</span>
+              <span class="queue-cpu">CPU</span>
+            </div>
+            <span class="viz-caption">ready queue → execution</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ THREADS VS PROCESSES ============================ -->
+  <section class="section" id="threads-vs-processes">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Comparison</p>
+        <h2 class="section-title">Threads vs Processes</h2>
+        <p class="section-lead">
+          Threads and processes both enable concurrent execution, but they differ significantly
+          in memory usage, communication, and isolation.
+        </p>
+      </div>
+
+      <div class="table-scroll" role="region" aria-label="Comparison of threads and processes" tabindex="0">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th scope="col">Attribute</th>
+              <th scope="col">Thread</th>
+              <th scope="col">Process</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Memory</th>
+              <td>Shares process memory</td>
+              <td>Separate memory space</td>
+            </tr>
+            <tr>
+              <th scope="row">Creation</th>
+              <td>Lightweight</td>
+              <td>More expensive</td>
+            </tr>
+            <tr>
+              <th scope="row">Communication</th>
+              <td>Easy through shared memory</td>
+              <td>Requires IPC</td>
+            </tr>
+            <tr>
+              <th scope="row">Context Switch</th>
+              <td>Generally faster</td>
+              <td>Generally slower</td>
+            </tr>
+            <tr>
+              <th scope="row">Isolation</th>
+              <td>Lower isolation</td>
+              <td>Strong isolation</td>
+            </tr>
+            <tr>
+              <th scope="row">Failure</th>
+              <td>Can affect the parent process</td>
+              <td>Usually isolated from other processes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="compare-visual">
+        <figure class="visual-panel">
+          <figcaption class="visual-caption">Threads share one process</figcaption>
+          <div class="box-process">
+            <span class="box-label">PROCESS A</span>
+            <div class="box-threads">
+              <span class="box-chip">Thread 1</span>
+              <span class="box-chip">Thread 2</span>
+              <span class="box-chip">Thread 3</span>
+            </div>
+            <div class="box-shared">Shared Memory</div>
+          </div>
+        </figure>
+
+        <span class="visual-vs" aria-hidden="true">vs</span>
+
+        <figure class="visual-panel">
+          <figcaption class="visual-caption">Processes own separate memory</figcaption>
+          <div class="box-pair">
+            <div class="box-solo">
+              <span class="box-label">PROCESS A</span>
+              <div class="box-memory">Memory A</div>
+            </div>
+            <div class="box-solo">
+              <span class="box-label">PROCESS B</span>
+              <div class="box-memory">Memory B</div>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ HOW IT WORKS ============================ -->
+  <section class="section section--divided" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Mechanism</p>
+        <h2 class="section-title">How Multithreading Works</h2>
+        <p class="section-lead">
+          From process creation to thread completion, each step has a clear responsibility.
+        </p>
+      </div>
+
+      <ol class="flow">
+        <li class="flow-step">
+          <span class="flow-num">01</span>
+          <h3 class="flow-title">Create a Process</h3>
+          <p class="flow-text">The OS allocates memory, files and resources for a new program instance.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">02</span>
+          <h3 class="flow-title">Create Multiple Threads</h3>
+          <p class="flow-text">New execution contexts are created inside the process and share its memory.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">03</span>
+          <h3 class="flow-title">Scheduler Assigns CPU Time</h3>
+          <p class="flow-text">The scheduler decides which ready thread runs, and for how long.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">04</span>
+          <h3 class="flow-title">Threads Perform Tasks</h3>
+          <p class="flow-text">Each thread executes its own instructions toward its own goal.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">05</span>
+          <h3 class="flow-title">Synchronization Protects Shared Resources</h3>
+          <p class="flow-text">Locks and related tools keep shared data consistent while it is modified.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">06</span>
+          <h3 class="flow-title">Threads Complete or Join</h3>
+          <p class="flow-text">Finished threads end, and the main thread can wait for them before continuing.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================ CONTEXT SWITCH ============================ -->
+  <section class="section section--tint" id="context-switch">
+    <div class="container container--narrow">
+      <div class="section-header">
+        <p class="eyebrow">Scheduling</p>
+        <h2 class="section-title">What is a Context Switch?</h2>
+        <p class="section-lead">
+          A context switch happens when the operating system pauses the execution of one thread
+          or process and allows another one to run. The paused execution context is stored so it
+          can be resumed later exactly where it stopped.
+        </p>
+      </div>
+
+      <div class="timeline" role="img" aria-label="Timeline showing thread A and thread B alternating on the CPU">
+        <div class="timeline-head">
+          <span class="timeline-axis">TIME →</span>
+        </div>
+
+        <div class="timeline-row">
+          <span class="timeline-label">Thread A</span>
+          <div class="timeline-track">
+            <span class="block block--run span-1">RUN</span>
+            <span class="block block--wait span-2">WAIT</span>
+            <span class="block block--run span-3">RUN</span>
+          </div>
+        </div>
+
+        <div class="timeline-row">
+          <span class="timeline-label">Thread B</span>
+          <div class="timeline-track">
+            <span class="block block--wait span-1">WAIT</span>
+            <span class="block block--run span-2">RUN</span>
+            <span class="block block--wait span-3">WAIT</span>
+          </div>
+        </div>
+
+        <div class="timeline-row timeline-scale" aria-hidden="true">
+          <span class="timeline-label"></span>
+          <div class="timeline-scale-track">
+            <span class="scale-a">t0</span>
+            <span class="scale-b">t1</span>
+            <span class="scale-c">t2</span>
+            <span class="scale-d">t3</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="body-text">
+        Thread switches are generally lighter than process switches because threads within the
+        same process share memory and resources. The system does not need to swap page tables or
+        reload an entire address space, so less work is required to pause one thread and resume
+        another. Process switches are more expensive for exactly the opposite reason: each process
+        owns a separate address space that must be preserved and restored.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================ SYNCHRONIZATION ============================ -->
+  <section class="section" id="synchronization">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Shared Data</p>
+        <h2 class="section-title">Synchronization &amp; Shared Data</h2>
+        <p class="section-lead">
+          When multiple threads access shared mutable data, synchronization mechanisms are used
+          to avoid inconsistent results.
+        </p>
+      </div>
+
+      <div class="grid-4 sync-grid">
+        <article class="sync-card">
+          <p class="sync-label">Mutex / Lock</p>
+          <p class="sync-text">Allows only one thread at a time to access a protected section.</p>
+        </article>
+        <article class="sync-card">
+          <p class="sync-label">Semaphore</p>
+          <p class="sync-text">Controls how many threads may access a resource simultaneously.</p>
+        </article>
+        <article class="sync-card">
+          <p class="sync-label">Condition</p>
+          <p class="sync-text">Allows threads to wait until a particular condition becomes true.</p>
+        </article>
+        <article class="sync-card">
+          <p class="sync-label">Event</p>
+          <p class="sync-text">Provides a simple signal that threads can wait for.</p>
+        </article>
+      </div>
+
+      <div class="sync-diagram-wrap">
+        <p class="diagram-title">Two threads reaching one protected resource</p>
+        <div class="sync-diagram" role="img" aria-label="Thread A and Thread B each pass through a lock before reaching shared data">
+          <span class="sync-node sync-end">Thread A</span>
+          <span class="sync-connector sync-connector--down" aria-hidden="true"></span>
+          <span class="sync-node sync-lock">LOCK</span>
+          <span class="sync-connector sync-connector--down" aria-hidden="true"></span>
+          <span class="sync-node sync-data">SHARED DATA</span>
+          <span class="sync-connector sync-connector--up" aria-hidden="true"></span>
+          <span class="sync-node sync-lock">LOCK</span>
+          <span class="sync-connector sync-connector--up" aria-hidden="true"></span>
+          <span class="sync-node sync-end">Thread B</span>
+        </div>
+        <p class="diagram-note">
+          Only one thread can hold the lock at a time, so reads and writes to the shared data
+          happen one after another instead of interleaving unpredictably.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ RACE CONDITION ============================ -->
+  <section class="section section--divided" id="race-condition">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Failure Mode 01</p>
+        <h2 class="section-title">Race Condition</h2>
+        <p class="section-lead">
+          A race condition occurs when the result of a program depends on the unpredictable
+          timing of two or more threads.
+        </p>
+      </div>
+
+      <div class="race-layout">
+        <div class="race-steps">
+          <p class="race-shared">Shared value: <code>counter = 10</code></p>
+          <ol class="race-list">
+            <li><span class="race-thread">Thread A</span> reads 10</li>
+            <li><span class="race-thread">Thread B</span> reads 10</li>
+            <li><span class="race-thread">Thread A</span> adds 1 → 11</li>
+            <li><span class="race-thread">Thread B</span> adds 1 → 11</li>
+          </ol>
+          <div class="race-result">
+            <div class="result-box">
+              <span class="result-label">Expected</span>
+              <span class="result-value">12</span>
+            </div>
+            <div class="result-box result-box--wrong">
+              <span class="result-label">Actual</span>
+              <span class="result-value">11</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="race-explain">
+          <p class="body-text">
+            Both threads perform a read, an addition, and a write. Because thread B reads the
+            value before thread A has written its result, the second increment is applied to the
+            original value instead of the updated one. The lost update is silent: no error is
+            raised, the program simply produces the wrong answer.
+          </p>
+          <p class="body-text">
+            This happens because both threads read and modify shared data without proper
+            synchronization.
+          </p>
+          <p class="note-box">
+            Shared mutable data should be properly synchronized when multiple threads can
+            modify it.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ DEADLOCK ============================ -->
+  <section class="section section--tint" id="deadlock">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Failure Mode 02</p>
+        <h2 class="section-title">Understanding Deadlock</h2>
+        <p class="section-lead">
+          A deadlock is a situation in which two or more threads are permanently waiting for
+          resources held by each other, so no thread can continue.
+        </p>
+      </div>
+
+      <div class="deadlock-diagram" role="img" aria-label="Thread A holds lock 1 and waits for lock 2 while thread B holds lock 2 and waits for lock 1">
+        <div class="deadlock-side">
+          <p class="deadlock-head">THREAD A</p>
+          <p class="deadlock-line">holds Lock 1</p>
+          <span class="deadlock-arrow" aria-hidden="true"></span>
+          <p class="deadlock-line deadlock-line--wait">waits for Lock 2</p>
+        </div>
+
+        <div class="deadlock-core">
+          <span class="deadlock-badge">DEADLOCK</span>
+          <p class="deadlock-core-text">Circular wait · no thread can proceed</p>
+        </div>
+
+        <div class="deadlock-side">
+          <p class="deadlock-head">THREAD B</p>
+          <p class="deadlock-line">holds Lock 2</p>
+          <span class="deadlock-arrow" aria-hidden="true"></span>
+          <p class="deadlock-line deadlock-line--wait">waits for Lock 1</p>
+        </div>
+      </div>
+
+      <div class="conditions">
+        <p class="conditions-title">Four necessary conditions</p>
+        <ol class="conditions-list">
+          <li><span class="cond-num">1</span> Mutual Exclusion</li>
+          <li><span class="cond-num">2</span> Hold and Wait</li>
+          <li><span class="cond-num">3</span> No Preemption</li>
+          <li><span class="cond-num">4</span> Circular Wait</li>
+        </ol>
+        <p class="conditions-note">
+          A deadlock can only happen when all four conditions hold at the same time. Breaking any
+          single one of them prevents the situation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ RACE VS DEADLOCK ============================ -->
+  <section class="section" id="race-vs-deadlock">
+    <div class="container container--narrow">
+      <div class="section-header">
+        <p class="eyebrow">Quick Distinction</p>
+        <h2 class="section-title">Race Condition vs Deadlock</h2>
+      </div>
+
+      <div class="split-compare">
+        <article class="split-col">
+          <p class="split-title">Race Condition</p>
+          <ul class="split-list">
+            <li>Threads continue executing</li>
+            <li>Result depends on execution timing</li>
+            <li>Can produce incorrect data</li>
+          </ul>
+        </article>
+        <article class="split-col">
+          <p class="split-title">Deadlock</p>
+          <ul class="split-list">
+            <li>Threads stop making progress</li>
+            <li>Threads wait for one another</li>
+            <li>Program may appear frozen</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ PYTHON THREADING ============================ -->
+  <section class="section section--tint" id="python">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Practical Example</p>
+        <h2 class="section-title">Multithreading in Python</h2>
+        <p class="section-lead">
+          Python provides the <code>threading</code> module for creating and managing threads.
+          The example below starts five workers, waits for each of them, and only then prints the
+          final message.
+        </p>
+      </div>
+
+      <div class="code-panel">
+        <div class="code-bar">
+          <span class="code-file">worker_threads.py</span>
+          <button class="code-copy" type="button" data-copy-target="example-code">Copy</button>
+        </div>
+<pre class="code-block"><code id="example-code"><span class="tk-kw">import</span> threading
+<span class="tk-kw">import</span> time
+<span class="tk-kw">import</span> random
+
+<span class="tk-kw">def</span> <span class="tk-fn">worker</span>(thread_id):
+    delay = random.randint(<span class="tk-num">1</span>, <span class="tk-num">3</span>)
+    time.sleep(delay)
+    <span class="tk-fn">print</span>(<span class="tk-str">f"Thread {thread_id} finished"</span>)
+
+threads = []
+
+<span class="tk-kw">for</span> i <span class="tk-kw">in</span> <span class="tk-fn">range</span>(<span class="tk-num">5</span>):
+    thread = threading.Thread(
+        target=worker,
+        args=(i + <span class="tk-num">1</span>,)
+    )
+    threads.append(thread)
+    thread.start()
+
+<span class="tk-kw">for</span> thread <span class="tk-kw">in</span> threads:
+    thread.join()
+
+<span class="tk-fn">print</span>(<span class="tk-str">"All threads completed."</span>)</code></pre>
+      </div>
+
+      <div class="explain-grid">
+        <ol class="explain-list">
+          <li><span class="explain-num">1</span> Five thread objects are created.</li>
+          <li><span class="explain-num">2</span> <code>start()</code> begins each thread.</li>
+          <li><span class="explain-num">3</span> Each worker waits for a random period.</li>
+          <li><span class="explain-num">4</span> The worker prints its ID when finished.</li>
+          <li><span class="explain-num">5</span> <code>join()</code> makes the main thread wait for every worker.</li>
+          <li><span class="explain-num">6</span> The final message appears only after all workers have finished.</li>
+        </ol>
+        <p class="explain-aside">
+          Because every worker sleeps, the five tasks overlap in time. The total runtime is close
+          to the longest single delay rather than the sum of all delays — that is the practical
+          benefit of concurrency for waiting tasks.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ GIL ============================ -->
+  <section class="section" id="gil">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">CPython Internals</p>
+        <h2 class="section-title">The Python GIL</h2>
+        <p class="section-lead">
+          In standard CPython, the Global Interpreter Lock allows only one thread at a time to
+          execute Python bytecode. Because of this, threads in a single Python process take turns
+          running Python code rather than executing it at the same instant on different cores.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="panel">
+          <h3 class="panel-title">Threading fits I/O-bound work</h3>
+          <p class="panel-text">
+            While a thread waits for data to arrive, it releases the GIL, so other threads can run.
+            That makes threading especially useful for tasks that spend most of their time waiting:
+          </p>
+          <ul class="tick-list tick-list--dots">
+            <li>Network requests</li>
+            <li>File operations</li>
+            <li>Database access</li>
+            <li>Waiting for external services</li>
+          </ul>
+        </article>
+
+        <article class="panel">
+          <h3 class="panel-title">Multiprocessing fits CPU-bound work</h3>
+          <p class="panel-text">
+            For CPU-intensive tasks, multiprocessing can often make better use of multiple CPU
+            cores, because each process runs its own interpreter with its own lock. Threads are
+            still not useless here — they can overlap computation with I/O — but they will not
+            speed up pure computation on their own in standard CPython.
+          </p>
+          <p class="panel-text panel-text--last">
+            Choose based on what the task waits for: waiting on devices favors threads, heavy
+            arithmetic favors separate processes.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ IO VS CPU ============================ -->
+  <section class="section section--divided" id="workloads">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Choosing an Approach</p>
+        <h2 class="section-title">I/O-Bound vs CPU-Bound</h2>
+        <p class="section-lead">
+          The nature of the workload decides whether threads or processes are the better tool.
+        </p>
+      </div>
+
+      <div class="grid-2 workload-grid">
+
+        <article class="workload">
+          <header class="workload-head">
+            <h3 class="workload-title">I/O-Bound</h3>
+            <span class="workload-tag">waits for the outside world</span>
+          </header>
+          <p class="workload-sub">Examples</p>
+          <ul class="workload-list">
+            <li>Downloading files</li>
+            <li>API requests</li>
+            <li>Reading files</li>
+            <li>Database queries</li>
+            <li>Network communication</li>
+          </ul>
+          <div class="workload-rec">
+            <p class="workload-rec-label">Recommended concept</p>
+            <p class="workload-rec-text">Threading can be useful because tasks spend significant time waiting.</p>
+          </div>
+        </article>
+
+        <article class="workload">
+          <header class="workload-head">
+            <h3 class="workload-title">CPU-Bound</h3>
+            <span class="workload-tag">uses the processor continuously</span>
+          </header>
+          <p class="workload-sub">Examples</p>
+          <ul class="workload-list">
+            <li>Large calculations</li>
+            <li>Image processing</li>
+            <li>Data compression</li>
+            <li>Numerical algorithms</li>
+            <li>Heavy computation</li>
+          </ul>
+          <div class="workload-rec">
+            <p class="workload-rec-label">Recommended concept</p>
+            <p class="workload-rec-text">Multiple processes may provide better CPU parallelism in standard CPython.</p>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ LIFECYCLE ============================ -->
+  <section class="section section--tint" id="lifecycle">
+    <div class="container container--narrow">
+      <div class="section-header">
+        <p class="eyebrow">States</p>
+        <h2 class="section-title">Thread Lifecycle</h2>
+        <p class="section-lead">
+          A thread moves between a small set of states from the moment it is created until it
+          finishes.
+        </p>
+      </div>
+
+      <ol class="lifecycle">
+        <li class="lifecycle-step">
+          <span class="state-box">NEW</span>
+          <p class="state-desc">The thread object exists, but it has not started running yet.</p>
+        </li>
+        <li class="lifecycle-connector" aria-hidden="true"></li>
+        <li class="lifecycle-step">
+          <span class="state-box">READY</span>
+          <p class="state-desc">The thread is eligible to run and waits for the scheduler to give it CPU time.</p>
+        </li>
+        <li class="lifecycle-connector" aria-hidden="true"></li>
+        <li class="lifecycle-step">
+          <span class="state-box state-box--active">RUNNING</span>
+          <p class="state-desc">The scheduler has selected the thread and its instructions are being executed.</p>
+        </li>
+        <li class="lifecycle-connector" aria-hidden="true"></li>
+        <li class="lifecycle-step">
+          <span class="state-box">WAITING / BLOCKED</span>
+          <p class="state-desc">The thread cannot continue until an event occurs, such as I/O finishing or a lock being released.</p>
+        </li>
+        <li class="lifecycle-connector" aria-hidden="true"></li>
+        <li class="lifecycle-step">
+          <span class="state-box">READY</span>
+          <p class="state-desc">The blocking event has finished, so the thread becomes eligible to run again.</p>
+        </li>
+        <li class="lifecycle-connector" aria-hidden="true"></li>
+        <li class="lifecycle-step">
+          <span class="state-box state-box--active">RUNNING</span>
+          <p class="state-desc">The thread resumes execution from where it was paused.</p>
+        </li>
+        <li class="lifecycle-connector" aria-hidden="true"></li>
+        <li class="lifecycle-step">
+          <span class="state-box state-box--done">TERMINATED</span>
+          <p class="state-desc">The thread has finished its work and its execution context can be released.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================ BEST PRACTICES ============================ -->
+  <section class="section" id="best-practices">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Habits</p>
+        <h2 class="section-title">Multithreading Best Practices</h2>
+        <p class="section-lead">
+          A short checklist to keep concurrent code predictable and easy to reason about.
+        </p>
+      </div>
+
+      <ul class="checklist">
+        <li>Keep critical sections small.</li>
+        <li>Protect shared mutable data.</li>
+        <li>Avoid unnecessary locks.</li>
+        <li>Always consider race conditions.</li>
+        <li>Acquire locks in a consistent order.</li>
+        <li>Release resources properly.</li>
+        <li>Use <code>thread.join()</code> when completion must be guaranteed.</li>
+        <li>Prefer simple synchronization designs.</li>
+        <li>Test concurrent code under different timing conditions.</li>
+        <li>Use multiprocessing when CPU parallelism is required.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================ QUIZ ============================ -->
+  <section class="section section--tint" id="quiz">
+    <div class="container container--narrow">
+      <div class="section-header">
+        <p class="eyebrow">Self-Test</p>
+        <h2 class="section-title">Check Your Understanding</h2>
+        <p class="section-lead">
+          Answer each question first, then reveal the model answer.
+        </p>
+      </div>
+
+      <ol class="quiz-list">
+        <li class="quiz-item">
+          <p class="quiz-q">Why is switching between threads generally lighter than switching between processes?</p>
+          <button class="quiz-toggle" type="button" aria-expanded="false">Show Answer</button>
+          <div class="quiz-answer" hidden>
+            <p>Threads of the same process share memory and resources, so the operating system does
+            not need to swap page tables or restore a whole address space. A process switch must
+            preserve and reload separate memory, which takes more work.</p>
+          </div>
+        </li>
+
+        <li class="quiz-item">
+          <p class="quiz-q">What is the main difference between a race condition and a deadlock?</p>
+          <button class="quiz-toggle" type="button" aria-expanded="false">Show Answer</button>
+          <div class="quiz-answer" hidden>
+            <p>In a race condition threads keep running but the result depends on timing and may be
+            wrong. In a deadlock threads stop making progress because each waits for a resource
+            held by the other, so the program may appear frozen.</p>
+          </div>
+        </li>
+
+        <li class="quiz-item">
+          <p class="quiz-q">Why is synchronization needed when threads modify shared data?</p>
+          <button class="quiz-toggle" type="button" aria-expanded="false">Show Answer</button>
+          <div class="quiz-answer" hidden>
+            <p>Without synchronization, a thread can read a value, another thread can change it,
+            and the first thread writes back an outdated result. Locks force the read-modify-write
+            sequence to happen as one indivisible step, keeping the data consistent.</p>
+          </div>
+        </li>
+
+        <li class="quiz-item">
+          <p class="quiz-q">What does <code>join()</code> do in Python?</p>
+          <button class="quiz-toggle" type="button" aria-expanded="false">Show Answer</button>
+          <div class="quiz-answer" hidden>
+            <p><code>join()</code> blocks the calling thread until the target thread finishes. The
+            main thread uses it to guarantee that every worker has completed before it continues,
+            for example before printing a final message.</p>
+          </div>
+        </li>
+
+        <li class="quiz-item">
+          <p class="quiz-q">Why is threading often useful for I/O-bound workloads?</p>
+          <button class="quiz-toggle" type="button" aria-expanded="false">Show Answer</button>
+          <div class="quiz-answer" hidden>
+            <p>During I/O the thread waits for a device, network or database and releases the GIL,
+            so other threads can run. Several waiting operations therefore overlap, and the total
+            time is closer to the slowest single operation than to their sum.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================ QUICK REFERENCE ============================ -->
+  <section class="section" id="reference">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Cheat Sheet</p>
+        <h2 class="section-title">Quick Reference</h2>
+        <p class="section-lead">The vocabulary of this page in one table.</p>
+      </div>
+
+      <div class="table-scroll" role="region" aria-label="Quick reference table" tabindex="0">
+        <table class="compare-table compare-table--ref">
+          <thead>
+            <tr>
+              <th scope="col">Concept</th>
+              <th scope="col">Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Thread</th><td>Lightweight execution unit inside a process</td></tr>
+            <tr><th scope="row">Process</th><td>Independent running program</td></tr>
+            <tr><th scope="row">Concurrency</th><td>Overlapping task progress</td></tr>
+            <tr><th scope="row">Parallelism</th><td>Simultaneous execution</td></tr>
+            <tr><th scope="row">Lock</th><td>Protects shared resources</td></tr>
+            <tr><th scope="row">Race Condition</th><td>Timing-dependent shared-data error</td></tr>
+            <tr><th scope="row">Deadlock</th><td>Threads permanently waiting for resources</td></tr>
+            <tr><th scope="row">join()</th><td>Waits for a thread to finish</td></tr>
+            <tr><th scope="row">GIL</th><td>CPython mechanism controlling Python bytecode execution</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ SUMMARY ============================ -->
+  <section class="section section--strong" id="summary">
+    <div class="container">
+      <div class="section-header section-header--light">
+        <p class="eyebrow eyebrow--light">Takeaway</p>
+        <h2 class="section-title">Remember These Four Ideas</h2>
+      </div>
+
+      <ol class="summary-grid">
+        <li class="summary-item">
+          <span class="summary-num">01</span>
+          <p>Threads share memory within a process.</p>
+        </li>
+        <li class="summary-item">
+          <span class="summary-num">02</span>
+          <p>Processes generally have separate memory spaces.</p>
+        </li>
+        <li class="summary-item">
+          <span class="summary-num">03</span>
+          <p>Shared mutable data often requires synchronization.</p>
+        </li>
+        <li class="summary-item">
+          <span class="summary-num">04</span>
+          <p>Python threading is especially practical for I/O-bound workloads.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================ LEARNING DASHBOARD ============================ -->
+  <section class="section" id="dashboard">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">Student Workspace</p>
+        <h2 class="section-title">Learning Dashboard</h2>
+        <p class="section-lead">Learn, experiment, and understand how concurrent programs behave.</p>
+      </div>
+
+      <div class="dash-overview">
+        <div class="dash-overview-copy">
+          <p class="dash-overview-brand">Multithreading Learning Hub</p>
+          <p class="dash-overview-text">Explore concurrency through interactive simulations.</p>
+          <div class="dash-overview-actions">
+            <a class="btn btn-primary" href="#simulator">Start Thread Simulator</a>
+            <a class="btn btn-outline" href="#concepts">Continue Learning</a>
+          </div>
+        </div>
+        <div class="dash-focus">
+          <p class="dash-focus-label">Current focus</p>
+          <p class="dash-focus-value" id="dash-focus">Introduction to Threads</p>
+          <p class="dash-focus-hint">Stored in this browser only.</p>
+        </div>
+      </div>
+
+      <div class="grid-4 dash-stats">
+        <div class="dash-stat">
+          <p class="dash-stat-value" id="stat-concepts">6</p>
+          <p class="dash-stat-label">Concepts Explored</p>
+        </div>
+        <div class="dash-stat">
+          <p class="dash-stat-value" id="stat-sims">0</p>
+          <p class="dash-stat-label">Simulations Run</p>
+        </div>
+        <div class="dash-stat">
+          <p class="dash-stat-value" id="stat-quiz">0%</p>
+          <p class="dash-stat-label">Quiz Progress</p>
+        </div>
+        <div class="dash-stat">
+          <p class="dash-stat-value" id="stat-threads">0</p>
+          <p class="dash-stat-label">Threads Tested</p>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+
+        <div class="tool-card" id="progress">
+          <div class="tool-head">
+            <h3 class="tool-title">Your Learning Progress</h3>
+            <span class="tool-meta" id="progress-percent">43%</span>
+          </div>
+          <p class="progress-caption">Overall Progress</p>
+          <div class="progress-track">
+            <span class="progress-fill" id="progress-fill"></span>
+          </div>
+          <ul class="progress-topics" id="progress-topics">
+            <li class="progress-topic is-done" data-topic="concepts">Introduction to Threads</li>
+            <li class="progress-topic is-done" data-topic="threads-vs-processes">Threads vs Processes</li>
+            <li class="progress-topic is-done" data-topic="context-switch">Context Switching</li>
+            <li class="progress-topic" data-topic="synchronization">Synchronization</li>
+            <li class="progress-topic" data-topic="race-condition">Race Conditions</li>
+            <li class="progress-topic" data-topic="deadlock">Deadlocks</li>
+            <li class="progress-topic" data-topic="python">Python Threading</li>
+          </ul>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">Quick Actions</h3>
+          </div>
+          <ul class="action-list">
+            <li><a class="action-item" href="#simulator"><span class="action-name">Start Simulation</span><span class="action-hint">Run 1&ndash;10 threads</span></a></li>
+            <li><a class="action-item" href="#race-lab"><span class="action-name">Test Race Condition</span><span class="action-hint">With and without a lock</span></a></li>
+            <li><a class="action-item" href="#deadlock-lab"><span class="action-name">Simulate Deadlock</span><span class="action-hint">Circular wait, visually</span></a></li>
+            <li><a class="action-item" href="#python"><span class="action-name">View Python Example</span><span class="action-hint">start(), sleep(), join()</span></a></li>
+            <li><a class="action-item" href="#quiz"><span class="action-name">Take Quick Quiz</span><span class="action-hint">Five review questions</span></a></li>
+            <li><a class="action-item" href="#concepts"><span class="action-name">Review Concepts</span><span class="action-hint">Core theory first</span></a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="dash-grid">
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">Recent Activity</h3>
+            <button class="link-btn" type="button" id="activity-clear">Clear</button>
+          </div>
+          <ul class="activity-list" id="activity-list">
+            <li class="activity-empty">No activity yet. Run a simulation to get started.</li>
+          </ul>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">Learning Achievements</h3>
+          </div>
+          <ul class="badge-list" id="badge-list">
+            <li class="badge-item" data-badge="first-sim">
+              <span class="badge-name">First Simulation</span>
+              <span class="badge-desc">Run your first thread experiment.</span>
+            </li>
+            <li class="badge-item" data-badge="concurrency">
+              <span class="badge-name">Concurrency Explorer</span>
+              <span class="badge-desc">Run both concurrent and sequential modes.</span>
+            </li>
+            <li class="badge-item" data-badge="lock">
+              <span class="badge-name">Lock Explorer</span>
+              <span class="badge-desc">Complete the race condition lock demonstration.</span>
+            </li>
+            <li class="badge-item" data-badge="deadlock">
+              <span class="badge-name">Deadlock Investigator</span>
+              <span class="badge-desc">Complete the deadlock demonstration.</span>
+            </li>
+            <li class="badge-item" data-badge="explorer">
+              <span class="badge-name">ThreadLab Explorer</span>
+              <span class="badge-desc">Open all major learning tools.</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================ THREAD SIMULATOR ============================ -->
+  <section class="section section--tint" id="simulator">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">Interactive Tool</p>
+        <h2 class="section-title">Thread Simulator</h2>
+        <p class="section-lead">Create simulated threads and observe how concurrent execution works.</p>
+      </div>
+
+      <p class="diagram-tag sim-tag">EDUCATIONAL SIMULATION</p>
+      <p class="body-text sim-disclaimer">
+        This simulator uses browser timers to visually demonstrate concurrency.
+        It does not create actual operating-system threads.
+      </p>
+
+      <!-- Configuration -->
+      <div class="tool-card">
+        <div class="tool-head">
+          <h3 class="tool-title">Thread Configuration</h3>
+          <span class="tool-meta" id="sim-mode-label">Concurrent mode</span>
+        </div>
+
+        <div class="sim-controls">
+
+          <div class="ctrl-group">
+            <p class="ctrl-label" id="threads-label">Number of Threads</p>
+            <div class="stepper" role="group" aria-labelledby="threads-label">
+              <button class="stepper-btn" type="button" id="threads-minus" aria-label="Decrease thread count">&minus;</button>
+              <input class="stepper-value" type="number" id="threads-count" value="5" min="1" max="10"
+                     inputmode="numeric" aria-label="Number of threads">
+              <button class="stepper-btn" type="button" id="threads-plus" aria-label="Increase thread count">+</button>
+            </div>
+            <p class="ctrl-hint">Minimum 1 &bull; Maximum 10</p>
+          </div>
+
+          <div class="ctrl-group">
+            <p class="ctrl-label">Execution Mode</p>
+            <div class="radio-row">
+              <label class="radio-card">
+                <input type="radio" name="sim-mode" value="concurrent" checked>
+                <span class="radio-card-title">Concurrent</span>
+                <span class="radio-card-hint">Threads overlap in time</span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="sim-mode" value="sequential">
+                <span class="radio-card-title">Sequential</span>
+                <span class="radio-card-hint">One thread after another</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label" for="min-delay">Minimum Delay</label>
+            <input class="range" type="range" id="min-delay" min="0.5" max="3" step="0.5" value="1">
+            <p class="ctrl-hint"><span id="min-delay-out">1</span> second</p>
+          </div>
+
+          <div class="ctrl-group">
+            <label class="ctrl-label" for="max-delay">Maximum Delay</label>
+            <input class="range" type="range" id="max-delay" min="1" max="5" step="0.5" value="3">
+            <p class="ctrl-hint"><span id="max-delay-out">3</span> seconds</p>
+          </div>
+
+        </div>
+
+        <div class="sim-actions">
+          <button class="btn btn-primary" type="button" id="sim-start">Start Threads</button>
+          <button class="btn btn-outline" type="button" id="sim-reset">Reset Simulation</button>
+          <button class="btn btn-outline" type="button" id="sim-pause">Pause Simulation</button>
+        </div>
+      </div>
+
+      <!-- Live counters -->
+      <div class="stat-row sim-counters">
+        <div class="stat-cell">
+          <p class="stat-value" id="count-total">0</p>
+          <p class="stat-label">Total Threads</p>
+        </div>
+        <div class="stat-cell">
+          <p class="stat-value" id="count-running">0</p>
+          <p class="stat-label">Running</p>
+        </div>
+        <div class="stat-cell">
+          <p class="stat-value" id="count-waiting">0</p>
+          <p class="stat-label">Waiting</p>
+        </div>
+        <div class="stat-cell">
+          <p class="stat-value" id="count-completed">0</p>
+          <p class="stat-label">Completed</p>
+        </div>
+        <div class="stat-cell">
+          <p class="stat-value" id="count-elapsed">0.0s</p>
+          <p class="stat-label">Elapsed Time</p>
+        </div>
+      </div>
+
+      <!-- Monitor + log -->
+      <div class="sim-grid">
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">Live Thread Monitor</h3>
+            <span class="tool-meta">Click a thread for details</span>
+          </div>
+          <div class="monitor" id="thread-monitor">
+            <p class="empty-note" id="monitor-empty">
+              No threads yet. Choose your settings and press <strong>Start Threads</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="tool-card tool-card--flush">
+          <div class="tool-head tool-head--pad">
+            <h3 class="tool-title">Execution Log</h3>
+            <button class="link-btn" type="button" id="log-clear">Clear Log</button>
+          </div>
+          <div class="exec-log" id="exec-log" role="log" aria-live="polite" aria-label="Execution log">
+            <p class="log-line"><span class="log-time">00:00.000</span><span class="log-msg">Waiting for simulation&hellip;</span></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Thread details -->
+      <div class="tool-card detail-card" id="thread-detail" hidden>
+        <div class="tool-head">
+          <h3 class="tool-title" id="detail-name">Thread 01</h3>
+          <button class="link-btn" type="button" id="detail-close">Close</button>
+        </div>
+        <dl class="detail-list">
+          <div class="detail-row"><dt>State</dt><dd id="detail-state">Ready</dd></div>
+          <div class="detail-row"><dt>Task Duration</dt><dd id="detail-duration">0.00 seconds</dd></div>
+          <div class="detail-row"><dt>Started</dt><dd id="detail-started">00:00.000</dd></div>
+          <div class="detail-row"><dt>Finished</dt><dd id="detail-finished">Not yet</dd></div>
+          <div class="detail-row"><dt>Completion Position</dt><dd id="detail-order">Not completed</dd></div>
+        </dl>
+      </div>
+
+      <!-- Timeline -->
+      <div class="tool-card" id="sim-timeline">
+        <div class="tool-head">
+          <h3 class="tool-title">Execution Timeline</h3>
+          <span class="tool-meta">TIME &rarr;</span>
+        </div>
+        <div class="stl" id="stl">
+          <p class="empty-note" id="stl-empty">Bars appear here once the simulation starts.</p>
+        </div>
+      </div>
+
+      <!-- Comparison -->
+      <div class="tool-card" id="sim-comparison" hidden>
+        <div class="tool-head">
+          <h3 class="tool-title">Execution Comparison</h3>
+          <span class="tool-meta">Educational simulation result</span>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-cell">
+            <p class="cmp-label">Concurrent</p>
+            <p class="cmp-value" id="cmp-concurrent">0.0s</p>
+          </div>
+          <div class="cmp-cell">
+            <p class="cmp-label">Sequential</p>
+            <p class="cmp-value" id="cmp-sequential">0.0s</p>
+          </div>
+          <div class="cmp-cell">
+            <p class="cmp-label">Individual Work</p>
+            <p class="cmp-value" id="cmp-work">0.0s</p>
+          </div>
+        </div>
+        <p class="body-text">
+          In concurrent execution, multiple tasks can make progress during overlapping periods.
+          Sequential execution waits for one task to finish before starting the next.
+        </p>
+        <p class="note-box">This is only the result of the educational simulation. It is not a
+          guaranteed measurement of real-world performance.</p>
+      </div>
+
+      <!-- Complete -->
+      <div class="tool-card result-card" id="sim-result" hidden>
+        <p class="eyebrow">Finished</p>
+        <h3 class="result-title">Simulation Complete</h3>
+        <p class="body-text" id="result-summary">5 threads successfully completed.</p>
+        <dl class="detail-list">
+          <div class="detail-row"><dt>Total concurrent execution time</dt><dd id="result-concurrent">0.0 seconds</dd></div>
+          <div class="detail-row"><dt>Sum of individual thread durations</dt><dd id="result-work">0.0 seconds</dd></div>
+        </dl>
+        <p class="body-text" id="result-explanation">
+          Although the total work is larger than the elapsed time, the tasks overlapped during
+          concurrent execution, which reduced the overall elapsed time.
+        </p>
+        <div class="sim-actions">
+          <button class="btn btn-primary" type="button" id="result-again">Run Again</button>
+          <button class="btn btn-outline" type="button" id="result-sequential">Try Sequential Mode</button>
+          <a class="btn btn-outline" href="#python">See the Python Equivalent</a>
+        </div>
+      </div>
+
+      <!-- Custom experiment -->
+      <div class="tool-card">
+        <div class="tool-head">
+          <h3 class="tool-title">Build Your Own Thread Experiment</h3>
+          <span class="tool-meta" id="exp-count">3 of 10 tasks</span>
+        </div>
+
+        <div class="exp-list" id="exp-list"></div>
+
+        <div class="sim-actions">
+          <button class="btn btn-outline" type="button" id="exp-add">+ Add Task</button>
+          <button class="btn btn-primary" type="button" id="exp-run">Run Experiment</button>
+        </div>
+
+        <div class="exp-results" id="exp-results" hidden>
+          <p class="ctrl-label">Experiment Results</p>
+          <div id="exp-result-rows"></div>
+          <div class="cmp-row cmp-row--tight">
+            <div class="cmp-cell">
+              <p class="cmp-label">Concurrent</p>
+              <p class="cmp-value" id="exp-concurrent">0.0s</p>
+            </div>
+            <div class="cmp-cell">
+              <p class="cmp-label">Sequential</p>
+              <p class="cmp-value" id="exp-sequential">0.0s</p>
+            </div>
+            <div class="cmp-cell">
+              <p class="cmp-label">Individual Work</p>
+              <p class="cmp-value" id="exp-work">0.0s</p>
+            </div>
+          </div>
+          <p class="body-text">
+            In concurrent execution, multiple tasks can make progress during overlapping periods.
+            Sequential execution waits for one task to finish before starting the next.
+          </p>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="presets">
+        <div class="section-header section-header--sub">
+          <h3 class="tool-title tool-title--lg">Preset Experiments</h3>
+          <p class="section-lead">Load a realistic scenario and run it immediately.</p>
+        </div>
+
+        <div class="grid-3">
+          <article class="preset-card">
+            <p class="preset-head">FILE DOWNLOADER</p>
+            <ul class="preset-list">
+              <li>Download File A</li>
+              <li>Download File B</li>
+              <li>Download File C</li>
+              <li>Download File D</li>
+            </ul>
+            <button class="btn btn-outline btn-sm preset-run" type="button" data-preset="file">Run Simulation</button>
+          </article>
+
+          <article class="preset-card">
+            <p class="preset-head">WEB APPLICATION</p>
+            <ul class="preset-list">
+              <li>Fetch API</li>
+              <li>Load Profile</li>
+              <li>Load Notifications</li>
+              <li>Download Images</li>
+              <li>Send Analytics</li>
+            </ul>
+            <button class="btn btn-outline btn-sm preset-run" type="button" data-preset="web">Run Simulation</button>
+          </article>
+
+          <article class="preset-card">
+            <p class="preset-head">DATABASE OPERATIONS</p>
+            <ul class="preset-list">
+              <li>Read Products</li>
+              <li>Check Inventory</li>
+              <li>Load Transactions</li>
+              <li>Generate Report</li>
+            </ul>
+            <button class="btn btn-outline btn-sm preset-run" type="button" data-preset="db">Run Simulation</button>
+          </article>
+        </div>
+      </div>
+
+      <!-- Python connection -->
+      <div class="py-link">
+        <div class="py-link-head">
+          <h3 class="tool-title tool-title--lg">See the Python Equivalent</h3>
+          <a class="btn btn-outline btn-sm" href="#python">Open Python Example</a>
+        </div>
+
+        <div class="code-panel">
+          <div class="code-bar">
+            <span class="code-lang">Python</span>
+            <button class="code-copy" type="button" data-copy-target="sim-python-code">Copy</button>
+          </div>
+          <pre class="code-block"><code id="sim-python-code"><span class="tk-kw">import</span> threading
+<span class="tk-kw">import</span> time
+<span class="tk-kw">import</span> random
+
+<span class="tk-kw">def</span> <span class="tk-fn">worker</span>(thread_id):
+    delay = random.randint(<span class="tk-num">1</span>, <span class="tk-num">3</span>)
+    time.sleep(delay)
+    <span class="tk-fn">print</span>(<span class="tk-str">f"Thread {thread_id} finished"</span>)
+
+threads = []
+
+<span class="tk-kw">for</span> i <span class="tk-kw">in</span> range(<span class="tk-num">5</span>):
+    thread = threading.Thread(
+        target=worker,
+        args=(i + <span class="tk-num">1</span>,)
+    )
+    threads.append(thread)
+    thread.start()
+
+<span class="tk-kw">for</span> thread <span class="tk-kw">in</span> threads:
+    thread.join()
+
+<span class="tk-fn">print</span>(<span class="tk-str">"All threads completed."</span>)</code></pre>
+        </div>
+
+        <ul class="py-terms">
+          <li><code>threading.Thread()</code> creates the thread object.</li>
+          <li><code>start()</code> starts the thread.</li>
+          <li><code>sleep()</code> simulates waiting or work.</li>
+          <li><code>join()</code> makes the main thread wait for completion.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================ RACE CONDITION LAB ============================ -->
+  <section class="section" id="race-lab">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">Interactive Tool</p>
+        <h2 class="section-title">Race Condition Lab</h2>
+        <p class="section-lead">See what can happen when multiple threads modify shared data.</p>
+      </div>
+
+      <div class="lab-grid">
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">Shared Counter</h3>
+            <span class="tool-meta" id="race-lock-state">Lock not used</span>
+          </div>
+
+          <p class="race-shared">Shared Counter = <code id="race-value">0</code></p>
+
+          <ul class="lab-threads">
+            <li><span class="race-thread">Thread A</span> Increment counter</li>
+            <li><span class="race-thread">Thread B</span> Increment counter</li>
+          </ul>
+
+          <div class="sim-actions">
+            <button class="btn btn-primary" type="button" id="race-without">Run Without Lock</button>
+            <button class="btn btn-outline" type="button" id="race-with">Run With Lock</button>
+            <button class="btn btn-outline" type="button" id="race-reset">Reset</button>
+          </div>
+
+          <div class="verdict" id="race-verdict" hidden>
+            <p class="verdict-title" id="race-verdict-title">Race Condition Occurred</p>
+            <div class="cmp-row cmp-row--tight">
+              <div class="cmp-cell">
+                <p class="cmp-label">Expected</p>
+                <p class="cmp-value">2</p>
+              </div>
+              <div class="cmp-cell">
+                <p class="cmp-label">Actual</p>
+                <p class="cmp-value" id="race-actual">1</p>
+              </div>
+            </div>
+            <p class="body-text" id="race-explain"></p>
+          </div>
+        </div>
+
+        <div class="tool-card tool-card--flush">
+          <div class="tool-head tool-head--pad">
+            <h3 class="tool-title">Step Log</h3>
+            <span class="tool-meta">Read / write order</span>
+          </div>
+          <div class="exec-log" id="race-log" role="log" aria-live="polite" aria-label="Race condition step log">
+            <p class="log-line"><span class="log-msg">Choose Run Without Lock or Run With Lock.</span></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ DEADLOCK VISUALIZER ============================ -->
+  <section class="section section--tint" id="deadlock-lab">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">Interactive Tool</p>
+        <h2 class="section-title">Deadlock Visualizer</h2>
+        <p class="section-lead">Two threads, two locks, and a circular wait.</p>
+      </div>
+
+      <div class="lab-grid">
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">Resources</h3>
+            <span class="tool-meta" id="dead-status">Idle</span>
+          </div>
+
+          <div class="lock-pair">
+            <div class="lock-box">
+              <p class="lock-name">LOCK A</p>
+              <p class="lock-owner" id="lock-a-owner">Free</p>
+            </div>
+            <div class="lock-box">
+              <p class="lock-name">LOCK B</p>
+              <p class="lock-owner" id="lock-b-owner">Free</p>
+            </div>
+          </div>
+
+          <ul class="lab-threads">
+            <li><span class="race-thread">Thread 1</span> Needs Lock A + Lock B</li>
+            <li><span class="race-thread">Thread 2</span> Needs Lock B + Lock A</li>
+          </ul>
+
+          <div class="sim-actions">
+            <button class="btn btn-primary" type="button" id="dead-run">Simulate Deadlock</button>
+            <button class="btn btn-outline" type="button" id="dead-prevent">Show Prevention</button>
+            <button class="btn btn-outline" type="button" id="dead-reset">Reset</button>
+          </div>
+
+          <div class="verdict" id="dead-flag" hidden>
+            <p class="verdict-title" id="dead-flag-title">DEADLOCK</p>
+            <p class="body-text" id="dead-flag-text">Both threads are waiting for a resource held by the other.</p>
+          </div>
+        </div>
+
+        <div class="tool-card tool-card--flush">
+          <div class="tool-head tool-head--pad">
+            <h3 class="tool-title">Execution Log</h3>
+            <span class="tool-meta">Thread 1 / Thread 2</span>
+          </div>
+          <div class="exec-log" id="dead-log" role="log" aria-live="polite" aria-label="Deadlock log">
+            <p class="log-line"><span class="log-msg">Press Simulate Deadlock to begin.</span></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ THREAD LIFECYCLE ============================ -->
+  <section class="section" id="lifecycle-lab">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">Interactive Tool</p>
+        <h2 class="section-title">Thread Lifecycle Visualizer</h2>
+        <p class="section-lead">Follow one sample thread from creation to termination.</p>
+      </div>
+
+      <div class="lab-grid">
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">State Sequence</h3>
+            <span class="tool-meta" id="lc-step">Step 1 of 7</span>
+          </div>
+
+          <ol class="lc-viz" id="lc-viz">
+            <li class="lc-state is-active">NEW</li>
+            <li class="lc-arrow" aria-hidden="true">&darr;</li>
+            <li class="lc-state">READY</li>
+            <li class="lc-arrow" aria-hidden="true">&darr;</li>
+            <li class="lc-state">RUNNING</li>
+            <li class="lc-arrow" aria-hidden="true">&darr;</li>
+            <li class="lc-state">WAITING</li>
+            <li class="lc-arrow" aria-hidden="true">&darr;</li>
+            <li class="lc-state">READY</li>
+            <li class="lc-arrow" aria-hidden="true">&darr;</li>
+            <li class="lc-state">RUNNING</li>
+            <li class="lc-arrow" aria-hidden="true">&darr;</li>
+            <li class="lc-state">TERMINATED</li>
+          </ol>
+
+          <div class="sim-actions">
+            <button class="btn btn-primary" type="button" id="lc-run">Run Lifecycle</button>
+            <button class="btn btn-outline" type="button" id="lc-reset">Reset</button>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">Current State</h3>
+          </div>
+          <p class="lc-current" id="lc-current">NEW</p>
+          <p class="ctrl-label">Reason</p>
+          <p class="body-text" id="lc-reason">Press Run Lifecycle to animate a sample thread through every state.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ CONTEXT SWITCH ============================ -->
+  <section class="section section--tint" id="context-switch-lab">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">Interactive Tool</p>
+        <h2 class="section-title">Context Switch Visualizer</h2>
+        <p class="section-lead">Watch the CPU move from one thread to another.</p>
+      </div>
+
+      <div class="lab-grid">
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">CPU</h3>
+            <span class="tool-meta" id="cs-state">Idle</span>
+          </div>
+
+          <div class="cpu-box">
+            <span class="cpu-thread" id="cpu-thread">[ IDLE ]</span>
+          </div>
+
+          <p class="ctrl-label">CPU Timeline</p>
+          <div class="cs-strip" id="cs-strip" role="img" aria-label="Blocks showing which thread holds the CPU"></div>
+
+          <div class="sim-actions">
+            <button class="btn btn-primary" type="button" id="cs-run">Run Context Switch</button>
+            <button class="btn btn-outline" type="button" id="cs-reset">Reset</button>
+          </div>
+
+          <p class="body-text">
+            A context switch occurs when execution changes from one thread or process to another.
+            The current state is saved, the scheduler picks the next thread, and its saved state is
+            restored before it continues.
+          </p>
+        </div>
+
+        <div class="tool-card tool-card--flush">
+          <div class="tool-head tool-head--pad">
+            <h3 class="tool-title">Scheduler Steps</h3>
+            <span class="tool-meta">Save &rarr; select &rarr; restore</span>
+          </div>
+          <div class="exec-log" id="cs-log" role="log" aria-live="polite" aria-label="Context switch log">
+            <p class="log-line"><span class="log-msg">Press Run Context Switch to begin.</span></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ SCHEDULER PLAYGROUND ============================ -->
+  <section class="section" id="scheduler-lab">
+    <div class="container">
+
+      <div class="section-header">
+        <p class="eyebrow">Interactive Tool</p>
+        <h2 class="section-title">Scheduler Playground</h2>
+        <p class="section-lead">Choose a simplified scheduling policy and watch simulated CPU time being assigned.</p>
+      </div>
+
+      <p class="diagram-tag sim-tag">SIMPLIFIED EDUCATIONAL SCHEDULER</p>
+      <p class="body-text sim-disclaimer">
+        This demo illustrates the idea of a scheduling policy. It does not reproduce the exact
+        behaviour of a real operating system scheduler.
+      </p>
+
+      <div class="lab-grid">
+
+        <div class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">Threads</h3>
+            <span class="tool-meta" id="sched-count">3 of 6 tasks</span>
+          </div>
+
+          <div class="sched-list" id="sched-list"></div>
+
+          <div class="sim-actions">
+            <button class="btn btn-outline" type="button" id="sched-add">+ Add Thread</button>
+          </div>
+
+          <p class="ctrl-label">Scheduling Algorithm</p>
+          <div class="radio-row">
+            <label class="radio-card">
+              <input type="radio" name="sched-mode" value="fcfs" checked>
+              <span class="radio-card-title">First Come First Served</span>
+              <span class="radio-card-hint">Each thread runs to completion</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="sched-mode" value="rr">
+              <span class="radio-card-title">Round Robin</span>
+              <span class="radio-card-hint">Fixed time slices, then switch</span>
+            </label>
+          </div>
+
+          <div class="ctrl-group" id="quantum-group">
+            <label class="ctrl-label" for="quantum">Time Quantum</label>
+            <input class="range" type="range" id="quantum" min="0.5" max="2" step="0.5" value="1">
+            <p class="ctrl-hint"><span id="quantum-out">1</span> second</p>
+          </div>
+
+          <div class="sim-actions">
+            <button class="btn btn-primary" type="button" id="sched-run">Run Schedule</button>
+            <button class="btn btn-outline" type="button" id="sched-reset">Reset</button>
+          </div>
+        </div>
+
+        <div class="tool-card tool-card--flush">
+          <div class="tool-head tool-head--pad">
+            <h3 class="tool-title">CPU Assignment</h3>
+            <span class="tool-meta" id="sched-clock">0.0s</span>
+          </div>
+          <div class="sched-strip-wrap">
+            <div class="sched-strip" id="sched-strip" role="img" aria-label="Simulated CPU time slices"></div>
+            <p class="empty-note" id="sched-strip-empty">CPU time slices appear here once you run a schedule.</p>
+          </div>
+          <div class="sched-panel">
+            <p class="ctrl-label">Completion Order</p>
+            <ol class="sched-order" id="sched-order">
+              <li class="activity-empty">Run a schedule to see the order.</li>
+            </ol>
+            <div class="exec-log exec-log--short" id="sched-log" role="log" aria-live="polite" aria-label="Scheduler log">
+              <p class="log-line"><span class="log-msg">Waiting for a schedule&hellip;</span></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ABOUT ============================ -->
+  <section class="section section--tint" id="about">
+    <div class="container container--narrow">
+
+      <div class="section-header">
+        <p class="eyebrow">About</p>
+        <h2 class="section-title">About ThreadLab</h2>
+        <p class="section-lead">
+          ThreadLab is a student-focused learning hub for multithreading and concurrency.
+        </p>
+      </div>
+
+      <p class="body-text">
+        The top navigation follows the theory: concepts, threads versus processes,
+        synchronization, race conditions, deadlocks and Python threading. The tools menu
+        (&#9776;) opens the interactive side of the site: a learning dashboard, a thread
+        simulator, a race condition lab, a deadlock visualizer, a lifecycle walkthrough,
+        a context switch visualizer and a small scheduling playground.
+      </p>
+      <p class="body-text">
+        Everything on this page runs locally in your browser with plain JavaScript. There is no
+        account, no server and no database. Progress, statistics and recent activity are stored
+        in this browser only, so clearing site data resets the dashboard.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#dashboard">Open the Dashboard</a>
+        <a class="btn btn-outline" href="#simulator">Start the Simulator</a>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+
+    <div class="footer-brand">
+      <p class="footer-logo">THREADLAB</p>
+      <p class="footer-tag">Multithreading Learning Hub</p>
+      <p class="footer-desc">
+        A student-friendly guide to threads, processes, synchronization, and Python concurrency.
+      </p>
+    </div>
+
+    <nav class="footer-col" aria-label="Explore">
+      <p class="footer-head">Explore</p>
+      <ul>
+        <li><a href="#concepts">Concepts</a></li>
+        <li><a href="#synchronization">Synchronization</a></li>
+        <li><a href="#python">Python Threading</a></li>
+      </ul>
+    </nav>
+
+    <nav class="footer-col" aria-label="Resources">
+      <p class="footer-head">Resources</p>
+      <ul>
+        <li><a href="#reference">Quick Reference</a></li>
+        <li><a href="#quiz">Quiz</a></li>
+        <li><a href="#best-practices">Best Practices</a></li>
+      </ul>
+    </nav>
+
+  </div>
+
+  <div class="container footer-bottom">
+    <p>Built for learning Operating Systems and Concurrent Programming.</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
